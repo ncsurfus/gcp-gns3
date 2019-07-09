@@ -1,0 +1,8 @@
+*
+
+!*/
+!.gitignore
+!*.tf
+!conf/**
+
+backend.tf
