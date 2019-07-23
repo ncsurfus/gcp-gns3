@@ -13,7 +13,7 @@ data "google_compute_image" "ubuntu_1804_image" {
 resource "google_compute_disk" "ubuntu_1804_virt_disk" {
   name  = "ubuntu-1804-virt-disk"
   type  = "pd-standard"
-  image = "${data.google_compute_image.ubuntu_1804_image.name}"
+  image = "${data.google_compute_image.ubuntu_1804_image.self_link}"
   size  = "10"
 }
 
@@ -74,26 +74,27 @@ resource "google_compute_instance" "gns3_compute" {
 
   provisioner "remote-exec" {
     inline = [
-      "sleep 10",
       "curl 'https://www.duckdns.org/update?domains=${var.duckdns_domain}&token=${var.duckdns_token}'",
       "sudo apt-get update",
-      "sudo apt-get install -y --no-install-recommends docker.io docker-compose",
+      "sudo apt-get install -y --no-install-recommends docker.io",
       "sudo systemctl start docker",
       "sudo systemctl enable docker",
       "sudo usermod -aG docker $USER",
       "echo 'VPN_PSK=${var.vpn_psk}' > .env",
       "echo 'VPN_USERNAME=${var.vpn_username}' >> .env",
       "echo 'VPN_PASSWORD=${var.vpn_password}' >> .env",
-      "sudo mkdir -p /data",
-      "sudo mount -o discard,defaults /dev/sdb /data",
-      "sudo docker-compose up -d"
+      "sudo mkdir -p /mnt/disks/data",
+      "sudo mount -o discard,defaults /dev/sdb /mnt/disks/data",
+      "sudo docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v \"$PWD:$PWD\" \\",
+      "    -w=\"$PWD\" docker/compose:1.24.1 up -d"
     ]
   }
 
   provisioner "remote-exec" {
     when = "destroy"
     inline = [
-      "sudo docker-compose down",
+      "sudo docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v \"$PWD:$PWD\" \\",
+      "    -w=\"$PWD\" docker/compose:1.24.1 down"
     ]
   }
 }

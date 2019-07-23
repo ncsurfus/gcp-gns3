@@ -8,7 +8,7 @@ services:
       skynet:
         ipv4_address: 172.28.1.1
     volumes:
-      - /data/:/data/
+      - /mnt/disks/data/:/data/
   vpn:
     build: ./vpn/
     privileged: true
