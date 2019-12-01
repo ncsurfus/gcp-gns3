@@ -34,7 +34,7 @@ resource "google_compute_image" "ubuntu_1804_virt_image" {
 
 resource "google_compute_instance" "gns3_compute" {
   name             = "gns3-compute"
-  machine_type     = "n1-standard-8"
+  machine_type     = "n1-standard-1"
   min_cpu_platform = "Intel Haswell"
 
   boot_disk {
@@ -75,6 +75,7 @@ resource "google_compute_instance" "gns3_compute" {
   provisioner "remote-exec" {
     inline = [
       "curl 'https://www.duckdns.org/update?domains=${var.duckdns_domain}&token=${var.duckdns_token}'",
+      "sleep 60",
       "sudo apt-get update",
       "sudo apt-get install -y --no-install-recommends docker.io",
       "sudo systemctl start docker",
