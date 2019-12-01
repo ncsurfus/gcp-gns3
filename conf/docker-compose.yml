@@ -1,7 +1,7 @@
 version: "3"
 services:
   gns3:
-    image: ncsurfus/gns3:latest
+    image: ncsurfus/gns3:2.2.3.0
     privileged: true
     restart: unless-stopped
     networks:
