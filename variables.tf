@@ -2,14 +2,6 @@ variable "gcloud_credential_file" {
     description = "The gcloud credential json file."
 }
 
-variable "gcloud_state_bucket" {
-    description = "The gcloud bucket to store the state in."
-}
-
-variable "gcloud_state_prefix" {
-    description = "The prefix for the state file name."
-}
-
 variable "gcloud_project" {
     description = "The gcloud project name."
 }
