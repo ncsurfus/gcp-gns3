@@ -2,6 +2,7 @@
 
 !*/
 !.gitignore
+!*.md
 !*.tf
 !conf/**
 
