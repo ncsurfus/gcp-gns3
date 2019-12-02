@@ -1,7 +1,7 @@
 version: "3"
 services:
   gns3:
-    image: ncsurfus/gns3:2.2.3.0
+    image: ncsurfus/gns3:2.2.3.2
     privileged: true
     restart: unless-stopped
     networks:
@@ -10,7 +10,7 @@ services:
     volumes:
       - /mnt/disks/data/:/data/
   vpn:
-    build: ./vpn/
+    image: ncsurfus/gns3-vpn:2.2.3.2
     privileged: true
     restart: unless-stopped
     networks:
