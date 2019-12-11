@@ -33,9 +33,10 @@ resource "google_compute_image" "ubuntu_1804_virt_image" {
 }
 
 resource "google_compute_instance" "gns3_compute" {
-  name             = "gns3-compute"
-  machine_type     = "n1-standard-1"
-  min_cpu_platform = "Intel Haswell"
+  name                      = "gns3-compute"
+  machine_type              = "n1-standard-4"
+  min_cpu_platform          = "Intel Haswell"
+  allow_stopping_for_update = true
 
   boot_disk {
     initialize_params {
@@ -47,6 +48,11 @@ resource "google_compute_instance" "gns3_compute" {
 
   attached_disk {
     source = "${var.gcloud_disk_selfLink}"
+  }
+
+  scheduling {
+    preemptible       = true
+    automatic_restart = false
   }
 
   metadata = {
@@ -78,8 +84,6 @@ resource "google_compute_instance" "gns3_compute" {
       "sleep 60",
       "sudo apt-get update",
       "sudo apt-get install -y --no-install-recommends docker.io",
-      "sudo systemctl start docker",
-      "sudo systemctl enable docker",
       "sudo usermod -aG docker $USER",
       "echo 'VPN_PSK=${var.vpn_psk}' > .env",
       "echo 'VPN_USERNAME=${var.vpn_username}' >> .env",
@@ -88,14 +92,6 @@ resource "google_compute_instance" "gns3_compute" {
       "sudo mount -o discard,defaults /dev/sdb /mnt/disks/data",
       "sudo docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v \"$PWD:$PWD\" \\",
       "    -w=\"$PWD\" docker/compose:1.24.1 up -d"
-    ]
-  }
-
-  provisioner "remote-exec" {
-    when = "destroy"
-    inline = [
-      "sudo docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v \"$PWD:$PWD\" \\",
-      "    -w=\"$PWD\" docker/compose:1.24.1 down"
     ]
   }
 }

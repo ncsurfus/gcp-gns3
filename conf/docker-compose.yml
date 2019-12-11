@@ -23,8 +23,6 @@ services:
     ports:
       - "500:500/udp"
       - "4500:4500/udp"
-volumes:
-  gns3Docker:
 networks:
   skynet:
     ipam:
