@@ -26,9 +26,7 @@ resource "google_compute_image" "ubuntu_1804_virt_image" {
   ]
 
   lifecycle {
-    ignore_changes = [
-      "licenses"
-    ]
+    ignore_changes = [ "licenses" ]
   }
 }
 
@@ -90,8 +88,8 @@ resource "google_compute_instance" "gns3_compute" {
       "echo 'VPN_PASSWORD=${var.vpn_password}' >> .env",
       "sudo mkdir -p /mnt/disks/data",
       "sudo mount -o discard,defaults /dev/sdb /mnt/disks/data",
-      "sudo docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v \"$PWD:$PWD\" \\",
-      "    -w=\"$PWD\" docker/compose:1.24.1 up -d"
+      "sudo chmod +x ~/docker-compose",
+      "sudo ~/docker-compose up -d"
     ]
   }
 }
