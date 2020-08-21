@@ -1,31 +1,9 @@
 version: "3"
 services:
   gns3:
-    image: ncsurfus/gns3:2.2.3.4
+    image: ncsurfus/gns3:2.2.12.0
     privileged: true
     restart: unless-stopped
-    networks:
-      skynet:
-        ipv4_address: 172.28.1.1
+    network_mode: host
     volumes:
       - /mnt/disks/data/:/data/
-  vpn:
-    image: ncsurfus/gns3-vpn:2.2.3.4
-    privileged: true
-    restart: unless-stopped
-    networks:
-      skynet:
-        ipv4_address: 172.28.1.2
-    environment:
-      - VPN_IPSEC_PSK=${VPN_PSK}
-      - VPN_USER=${VPN_USERNAME}
-      - VPN_PASSWORD=${VPN_PASSWORD}
-    ports:
-      - "500:500/udp"
-      - "4500:4500/udp"
-networks:
-  skynet:
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.28.0.0/16

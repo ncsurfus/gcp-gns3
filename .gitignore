@@ -1,9 +1,3 @@
-*
-
-!*/
+infrastructure/backend.tf
+.**
 !.gitignore
-!*.md
-!*.tf
-!conf/**
-
-backend.tf
