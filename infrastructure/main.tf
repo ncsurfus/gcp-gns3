@@ -1,7 +1,7 @@
 provider "google" {
-  project     = var.gcloud_project
-  region      = var.gcloud_region
-  zone        = "us-central1-a"
+  project = var.gcloud_project
+  region  = var.gcloud_region
+  zone    = "us-central1-a"
 }
 
 data "google_compute_image" "ubuntu_1804_image" {
@@ -14,6 +14,15 @@ resource "google_compute_disk" "ubuntu_1804_virt_disk" {
   type  = "pd-standard"
   image = data.google_compute_image.ubuntu_1804_image.self_link
   size  = "10"
+}
+
+resource "google_compute_disk" "gns3_storage" {
+  name            = "gns3-storage"
+  type            = "pd-standard"
+  size            = 25
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "google_compute_image" "ubuntu_1804_virt_image" {
@@ -45,7 +54,7 @@ resource "google_compute_instance" "gns3_compute" {
   }
 
   attached_disk {
-    source = var.gcloud_disk_selfLink
+    source = google_compute_disk.gns3_storage.self_link
   }
 
   scheduling {

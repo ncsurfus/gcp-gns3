@@ -17,4 +17,4 @@ URL="https://www.duckdns.org/update?domains=$DUCK_DNS_DOMAIN&token=$DUCK_DNS_TOK
 ssh -oStrictHostKeyChecking=no "$INSTANCE_IP" "curl -s '$URL'"
 
 # Set auto shutdown in case we forget to turn it off
-sudo shutdown -P +120
+ssh -oStrictHostKeyChecking=no "$INSTANCE_IP" "sudo shutdown -P +120"
