@@ -27,5 +27,8 @@ if [ $? -gt 0 ]; then
   sudo mount -a
 fi
 
+# Resize if needed
+sudo resize2fs "$DRIVE"
+
 # Start container
 sudo ~/conf/docker-compose up -d

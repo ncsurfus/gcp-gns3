@@ -1,7 +1,6 @@
 provider "google" {
   project = var.gcloud_project
   region  = var.gcloud_region
-  zone    = "us-central1-a"
 }
 
 data "google_compute_image" "ubuntu_1804_image" {
@@ -19,7 +18,7 @@ resource "google_compute_disk" "ubuntu_1804_virt_disk" {
 resource "google_compute_disk" "gns3_storage" {
   name            = "gns3-storage"
   type            = "pd-standard"
-  size            = 25
+  size            = 30
   lifecycle {
     prevent_destroy = true
   }
@@ -40,7 +39,7 @@ resource "google_compute_image" "ubuntu_1804_virt_image" {
 
 resource "google_compute_instance" "gns3_compute" {
   name                      = "gns3-compute"
-  machine_type              = "n1-standard-8"
+  machine_type              = "n1-standard-2"
   min_cpu_platform          = "Intel Skylake"
   allow_stopping_for_update = true
   desired_status            = var.instance_state

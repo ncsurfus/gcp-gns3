@@ -1,20 +1,26 @@
 #!/bin/bash
 set -e
 
-# Get output ip for the instance
-INSTANCE_IP=$(./terraform.sh output instance_ip)
+echo "Waiting for SSH..."
+until ./ssh.sh "hostname"
+do
+  echo "Retrying..."
+  sleep 1;
+done
 
-# Upload
-ssh -oStrictHostKeyChecking=no "$INSTANCE_IP" "rm -rf ~/conf/"
+echo -e "\nSetting Auto-Shutdown..."
+./ssh.sh "sudo shutdown -P +120"
+
+echo -e "\nUploading Configuration..."
+./ssh.sh "rm -rf ~/conf/"
+INSTANCE_IP=$(./terraform.sh output instance_ip)
 scp -oStrictHostKeyChecking=no -r ./conf/ "$INSTANCE_IP:~/conf/"
 
-# Execute
-ssh -oStrictHostKeyChecking=no "$INSTANCE_IP" "~/conf/deploy-conf.sh"
+echo -e "\nExecuting Deploy..."
+./ssh.sh "~/conf/deploy-conf.sh"
 
-# Update DNS
+echo -e "\nUpdating DNS.."
 source ./secrets-macos.sh
-URL="https://www.duckdns.org/update?domains=$DUCK_DNS_DOMAIN&token=$DUCK_DNS_TOKEN"
-ssh -oStrictHostKeyChecking=no "$INSTANCE_IP" "curl -s '$URL'"
+./ssh.sh "curl -s 'https://www.duckdns.org/update?domains=$DUCK_DNS_DOMAIN&token=$DUCK_DNS_TOKEN'"
 
-# Set auto shutdown in case we forget to turn it off
-ssh -oStrictHostKeyChecking=no "$INSTANCE_IP" "sudo shutdown -P +120"
+echo -e "\n\nCompleted!"
